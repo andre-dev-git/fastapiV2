@@ -1,20 +1,16 @@
 from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-from ..models import DynamicColumn
 from ..database import get_db
 from ..schemas import DynamicColumnCreate
+from ..services.columns import ColumnsService
 
 router = APIRouter()
 
 @router.post("/columns/")
 def create_column(column: DynamicColumnCreate, db: Session = Depends(get_db)):
-    new_column = DynamicColumn(name=column.name, data_type=column.data_type)
-    db.add(new_column)
-    db.commit()
-    db.refresh(new_column)
-    return {"message": "Coluna criada com sucesso!", "column": new_column}
+    result = ColumnsService.create_column(db, column)
+    return {"message": "Coluna criada com sucesso!", "column": result}
 
 @router.get("/columns/")
 def list_columns(db: Session = Depends(get_db)):
-    columns = db.query(DynamicColumn).all()
-    return columns
+    return {"message": "Ok", "data": ColumnsService.list_columns(db)}
