@@ -6,6 +6,17 @@ from ..schemas import ItemValueCreate
 class ValuesService:
     
     def create_value(self, db: Session, value: ItemValueCreate):
+        existing_value = db.query(ItemValue).filter_by(
+            item_id=value.item_id,
+            column_id=value.column_id
+        ).first()
+
+        if existing_value:
+            existing_value.value = value.value
+            db.commit()
+            db.refresh(existing_value)
+            return existing_value
+        
         new_value = ItemValue(
             item_id=value.item_id,
             column_id=value.column_id,
