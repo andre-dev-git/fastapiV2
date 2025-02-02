@@ -1,26 +1,17 @@
-from fastapi import FastAPI, Depends
-from sqlalchemy.orm import Session
-from . import crud, schemas, database
+from fastapi import FastAPI
+from .routers import columns, items, values
+from .database import Base, engine
 
-# Iniciar a aplicação FastAPI
+# Criar as tabelas no banco de dados
+Base.metadata.create_all(bind=engine)
+
 app = FastAPI()
 
-# Dependência para acessar a sessão do banco de dados
-def get_db():
-    db = database.SessionLocal()
-    try:
-        yield db
-    finally:
-        db.close()
+# Incluir as rotas
+app.include_router(columns.router, prefix="/api", tags=["Columns"])
+app.include_router(items.router, prefix="/api", tags=["Items"])
+app.include_router(values.router, prefix="/api", tags=["Values"])
 
 @app.get("/")
 def home():
-    return {"message": "API de Estoque"}
-
-@app.post("/estoque/")
-def adicionar_item(item: schemas.ItemEstoque, db: Session = Depends(get_db)):
-    return crud.adicionar_item(db=db, item=item)
-
-@app.get("/estoque/")
-def listar_estoque(db: Session = Depends(get_db)):
-    return crud.listar_estoque(db=db)
+    return {"message": "API dinâmica pronta para uso!"}

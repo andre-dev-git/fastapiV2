@@ -1,9 +1,10 @@
 from pydantic import BaseModel
 
-# Esquema para o item no estoque
-class ItemEstoque(BaseModel):
-    nome_item: str
-    quantidade: int
+class DynamicColumnCreate(BaseModel):
+    name: str
+    data_type: str
 
-    class Config:
-        orm_mode = True
+class ItemValueCreate(BaseModel):
+    item_id: int
+    column_id: int
+    value: str
