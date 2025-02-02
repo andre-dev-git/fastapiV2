@@ -1,0 +1,17 @@
+version: "3.8"
+services:
+  postgres:
+    image: postgres
+    container_name: meu_postgres
+    restart: always
+    environment:
+      POSTGRES_USER: root
+      POSTGRES_PASSWORD: root
+      POSTGRES_DB: storage
+    ports:
+      - "5432:5432"
+    volumes:
+      - storage:/var/lib/postgresql/data
+
+volumes:
+  storage:
